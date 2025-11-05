@@ -9,7 +9,7 @@ import os
 st.set_page_config(page_title="AI Travel Planner", page_icon="✈️", layout="wide")
 
 # Title
-st.title("✈️ AI Travel Planning Assistant")
+st.title("✈️BonVoyage - AI Travel Planning Assistant")
 st.markdown("Plan your perfect trip with AI-powered recommendations!")
 
 # Input form
