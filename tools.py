@@ -1,5 +1,6 @@
 from crewai.tools import tool
-from crewai import Agent, LLM
+from crewai import Agent
+from langchain_google_genai import ChatGoogleGenerativeAI
 from duckduckgo_search import DDGS
 import os
 import streamlit as st
@@ -7,14 +8,18 @@ import streamlit as st
 def get_llm():
     """Returns LLM configured for Streamlit Cloud"""
     try:
-        # Try to get API key from Streamlit secrets first
+        # Get API key from Streamlit secrets
         api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv('GEMINI_API_KEY')
-        if api_key:
-            os.environ['GEMINI_API_KEY'] = api_key
-            return LLM(model="gemini/gemini-2.0-flash-exp")
-        else:
+        if not api_key:
             st.error("⚠️ GEMINI_API_KEY not found! Add it in Streamlit Cloud Settings → Secrets")
             st.stop()
+        
+        # Use langchain's ChatGoogleGenerativeAI instead of CrewAI's LLM
+        return ChatGoogleGenerativeAI(
+            model="gemini-1.5-flash",
+            google_api_key=api_key,
+            temperature=0.7
+        )
     except Exception as e:
         st.error(f"Error initializing LLM: {e}")
         st.stop()
