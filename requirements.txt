@@ -1,6 +1,6 @@
 streamlit
-crewai[tools]
+crewai
+crewai-tools
 duckduckgo-search
-google-generativeai
+crewai[genai]
 langchain-google-genai
-langchain-community
