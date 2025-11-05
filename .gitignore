@@ -1,0 +1,39 @@
+# Use single > to REPLACE the file (not append)
+cat > .gitignore << 'EOF'
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+
+# Python compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+bin/
+lib/
+lib64/
+include/
+share/
+pyvenv.cfg
+
+# Environment variables
+.env
+.env.local
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+EOF
