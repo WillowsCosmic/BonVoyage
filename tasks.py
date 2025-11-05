@@ -78,7 +78,7 @@ def planner_task(context, agent, destination_city, interests, date_from, date_to
         
         Make it practical and easy to follow.""",
         
-        expected_output="""A complete travel itinerary document with:
+        expected_output=f"""A complete travel itinerary document with:
         
         # Travel Itinerary: {destination_city}
         
@@ -102,6 +102,5 @@ def planner_task(context, agent, destination_city, interests, date_from, date_to
         Write in clear, organized markdown format.""",
         
         agent=agent,
-        context=context, 
-        output_file="travel_itinerary.md"  
+        context=context
     )

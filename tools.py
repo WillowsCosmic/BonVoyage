@@ -1,22 +1,25 @@
 from crewai.tools import tool
 from crewai import Agent, LLM
 from duckduckgo_search import DDGS
-
 import os
-from dotenv import load_dotenv
+import streamlit as st
 
-# Load environment variables
-load_dotenv()
-
-# Update get_llm function
 def get_llm():
-    """Returns LLM based on available API keys"""
-    if os.getenv('GEMINI_API_KEY'):
-        return LLM(model="gemini/gemini-2.5-flash")
-    else:
-        return LLM(model="ollama/qwen2.5:7b", base_url="http://localhost:11434")
+    """Returns LLM configured for Streamlit Cloud"""
+    try:
+        # Try to get API key from Streamlit secrets first
+        api_key = st.secrets.get("GEMINI_API_KEY") or os.getenv('GEMINI_API_KEY')
+        if api_key:
+            os.environ['GEMINI_API_KEY'] = api_key
+            return LLM(model="gemini/gemini-2.0-flash-exp")
+        else:
+            st.error("⚠️ GEMINI_API_KEY not found! Add it in Streamlit Cloud Settings → Secrets")
+            st.stop()
+    except Exception as e:
+        st.error(f"Error initializing LLM: {e}")
+        st.stop()
 
-# Use in all agents
+# Initialize LLM
 llm = get_llm()
 
 @tool
@@ -32,16 +35,16 @@ def search_web_tool(query: str) -> str:
     """
     try:
         ddgs = DDGS()
-        results = ddgs.text(query, max_results=3)  # Reduced from 5
+        results = ddgs.text(query, max_results=3)
         
         if not results:
             return f"No search results found for '{query}'. Please use your general knowledge to provide information about this topic."
         
-        # Format results more concisely
+        # Format results concisely
         formatted_results = []
         for i, result in enumerate(results, 1):
             title = result.get('title', 'No title')
-            body = result.get('body', 'No description')[:200]  # Limit length
+            body = result.get('body', 'No description')[:200]
             formatted_results.append(f"{i}. {title}\n{body}...\n")
         
         return "\n".join(formatted_results)
@@ -59,7 +62,7 @@ location_expert = Agent(
     information without unnecessary elaboration.""",
     tools=[search_web_tool],
     verbose=True,
-    max_iter=15,  # Reduced from 25
+    max_iter=15,
     llm=llm,
     allow_delegation=False
 )
@@ -74,7 +77,7 @@ guide_expert = Agent(
     with practical details.""",
     tools=[search_web_tool],
     verbose=True,
-    max_iter=15,  # Reduced from 25
+    max_iter=15,
     llm=llm,
     allow_delegation=False
 )
@@ -90,11 +93,9 @@ planner_expert = Agent(
     
     You DO NOT search for new information. You ONLY organize and structure the information 
     provided to you by other experts into a beautiful, easy-to-follow itinerary.""",
-    
-    tools=[],  
-    
+    tools=[],
     verbose=True,
-    max_iter=10, 
+    max_iter=10,
     llm=llm,
     allow_delegation=False
 )
