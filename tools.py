@@ -1,7 +1,6 @@
 import streamlit as st
 from crewai import Agent, Crew, Process
 from langchain_google_genai import ChatGoogleGenerativeAI
-from tools import search_web_tool
 from tasks import location_task, guide_task, planner_task
 import os
 
